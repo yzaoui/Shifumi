@@ -6,7 +6,13 @@ const writeEvent = (text) => {
     const el = document.createElement('li');
     el.innerHTML = text;
 
+    let needToScroll = (parent.scrollTop + parent.clientHeight) === parent.scrollHeight;
+
     parent.appendChild(el);
+
+    if (needToScroll) {
+        parent.scrollTop = parent.scrollHeight;
+    }
 };
 
 const onFormSubmitted = (e) => {
