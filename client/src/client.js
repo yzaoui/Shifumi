@@ -19,17 +19,20 @@ const onFormSubmitted = (e) => {
     sock.emit('message', text);
 };
 
+const addButtonListeners = () => {
+    ['rock', 'paper', 'scissors'].forEach((i) => {
+        const button = document.getElementById(i);
+        button.addEventListener('click', () => {
+            sock.emit('play', i)
+        })
+    })
+};
+
 writeEvent('Welcome to RPS');
 
 const sock = io();
 sock.on('message', writeEvent);
 
-const onButtonClicked = (text) => {
-    console.log(text);
-    sock.emit('message', text);
-};
-
 document.querySelector('#chat-form').addEventListener('submit', onFormSubmitted);
-document.querySelector('#rock').addEventListener('click', () => onButtonClicked("Rock"));
-document.querySelector('#paper').addEventListener('click', () => onButtonClicked("Paper"));
-document.querySelector('#scissors').addEventListener('click', () => onButtonClicked("Scissors"));
+
+addButtonListeners();

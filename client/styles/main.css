@@ -29,13 +29,13 @@ button:hover {
     background-color: #79d7e4;
 }
 
-button.turn {
+button.play {
     color: rgb(255, 64, 129);
     background-color: white;
     box-shadow:none;
 }
 
-button.turn:hover {
+button.play:hover {
     background-color: #eaeaea;
 }
 
