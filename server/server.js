@@ -18,18 +18,18 @@ const io = socketio(server);
 
 let waitingPlayer = null;
 
-io.on('connection', (sock) => {
+io.on('connection', (socket) => {
     if (waitingPlayer) {
-        waitingPlayer.emit('message', 'Found a partner!');
-        new RpsGame(waitingPlayer, sock);
+        waitingPlayer.emit('server message', 'Found an opponent!');
+        new RpsGame(waitingPlayer, socket);
 
         waitingPlayer = null;
     } else {
-        waitingPlayer = sock;
-        waitingPlayer.emit('message', 'Waiting for a second partner...')
+        waitingPlayer = socket;
+        waitingPlayer.emit('server message', 'Waiting for an opponent...')
     }
 
-    sock.on('message', (text) => {
+    socket.on('message', (text) => {
         io.emit('message', text);
     });
 });

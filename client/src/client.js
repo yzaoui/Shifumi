@@ -1,18 +1,30 @@
-const writeEvent = (text) => {
-    // <ul> element
+const writeEvent = (element) => {
     const parent = document.querySelector('#events');
-
-    // <li> element
-    const el = document.createElement('li');
-    el.innerHTML = text;
 
     let needToScroll = (parent.scrollTop + parent.clientHeight) === parent.scrollHeight;
 
-    parent.appendChild(el);
+    parent.appendChild(element);
 
     if (needToScroll) {
         parent.scrollTop = parent.scrollHeight;
     }
+};
+
+const writeMessage = (text) => {
+    const el = document.createElement('li');
+    el.innerHTML = text;
+    writeEvent(el)
+};
+
+const log = (message) => {
+    const el = document.createElement('li');
+    console.log('logging');
+    el.innerHTML = message;
+
+    const strong = document.createElement('strong');
+    strong.appendChild(el);
+
+    writeEvent(strong);
 };
 
 const onFormSubmitted = (e) => {
@@ -29,15 +41,24 @@ const addButtonListeners = () => {
     ['rock', 'paper', 'scissors'].forEach((i) => {
         const button = document.getElementById(i);
         button.addEventListener('click', () => {
-            sock.emit('play', i)
+            sock.emit('play', i);
         })
     })
 };
 
-writeEvent('Welcome to RPS');
+const buttonsDisabled = (disabled) => {
+    ['rock', 'paper', 'scissors'].forEach((i) => {
+        const button = document.getElementById(i);
+        button.disabled = disabled;
+    })
+};
+
+log('Welcome to RPS');
 
 const sock = io();
-sock.on('message', writeEvent);
+sock.on('message', writeMessage);
+sock.on('server message', log);
+sock.on('buttonsDisabled', buttonsDisabled);
 
 document.querySelector('#chat-form').addEventListener('submit', onFormSubmitted);
 

@@ -12,16 +12,18 @@ class RpsGame {
     }
 
     _sendToPlayer(playerIndex, msg) {
-        this._players[playerIndex].emit('message', msg)
+        this._players[playerIndex].emit('server message', msg)
     }
 
     _sendToPlayers(msg) {
-        this._players.forEach(player => player.emit('message', msg))
+        this._players.forEach(player => player.emit('server message', msg))
     }
 
     _onPlay(playerIndex, play) {
         this._plays[playerIndex] = play;
         this._sendToPlayer(playerIndex, `You selected ${play}`);
+        this._setPlayButtonsDisabled(playerIndex, true);
+        this._sendToPlayer((playerIndex + 1) % 2, `Your opponent made a play.`);
 
         this._checkGameOver();
     }
@@ -34,6 +36,7 @@ class RpsGame {
             this._getGameResult();
             this._plays = [null, null];
             this._sendToPlayers('Next round...');
+            [0, 1].forEach((i) => this._setPlayButtonsDisabled(i, false))
         }
     }
 
@@ -41,7 +44,7 @@ class RpsGame {
         const p0 = RpsGame._decodePlay(this._plays[0]);
         const p1 = RpsGame._decodePlay(this._plays[1]);
 
-        const distance = (p1 - p0 + 3) % 3;
+        const distance = (p0 - p1 + 3) % 3;
 
         switch (distance) {
             case 0:
@@ -59,9 +62,13 @@ class RpsGame {
         }
     }
 
+    _setPlayButtonsDisabled(playerIndex, disabled) {
+        this._players[playerIndex].emit('buttonsDisabled', disabled);
+    }
+
     static _sendWinMessage(winner, loser) {
-        winner.emit('message', 'You won!');
-        loser.emit('message', 'You lost!');
+        winner.emit('server message', 'You won!');
+        loser.emit('server message', 'You lost!');
     }
 
     static _decodePlay(play) {
