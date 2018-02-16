@@ -21,12 +21,14 @@ class RpsGame {
     }
 
     _onPlay(playerIndex, play) {
-        this._plays[playerIndex] = play;
-        this._sendToPlayer(playerIndex, `You selected ${play}`);
-        this._setPlayButtonsDisabled(playerIndex, true);
-        this._sendToPlayer((playerIndex + 1) % 2, `Your opponent made a play.`);
+        if (this._plays[playerIndex] === null) {
+            this._plays[playerIndex] = play;
+            this._sendToPlayer(playerIndex, `You selected ${play}`);
+            this._setPlayButtonsDisabled(playerIndex, true);
+            this._sendToPlayer((playerIndex + 1) % 2, `Your opponent made a play.`);
 
-        this._checkGameOver();
+            this._checkGameOver();
+        }
     }
 
     _checkGameOver() {

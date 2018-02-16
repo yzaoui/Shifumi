@@ -16,9 +16,9 @@ const writeMessage = (text) => {
     writeEvent(el)
 };
 
-const log = (message) => {
+const log = (text) => {
     const el = document.createElement('li');
-    el.innerHTML = message;
+    el.innerHTML = text;
 
     const strong = document.createElement('strong');
     strong.appendChild(el);
