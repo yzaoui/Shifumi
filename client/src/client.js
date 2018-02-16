@@ -18,7 +18,6 @@ const writeMessage = (text) => {
 
 const log = (message) => {
     const el = document.createElement('li');
-    console.log('logging');
     el.innerHTML = message;
 
     const strong = document.createElement('strong');

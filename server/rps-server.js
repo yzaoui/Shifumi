@@ -3,6 +3,7 @@ class RpsGame {
         this._players = [p1, p2];
         this._plays = [null, null];
         this._sendToPlayers('Rock Paper Scissors has started!');
+        [0, 1].forEach(i => this._setPlayButtonsDisabled(i, false));
 
         this._players.forEach((player, i) => {
             player.on('play', (play) => {
