@@ -26,7 +26,7 @@ const log = (text) => {
     writeEvent(strong);
 };
 
-const onFormSubmitted = (e) => {
+const onChatSubmitted = (e) => {
     e.preventDefault();
 
     const input = document.querySelector('#chat');
@@ -34,6 +34,13 @@ const onFormSubmitted = (e) => {
     input.value = '';
 
     sock.emit('message', text);
+};
+
+const onUsernameSubmitted = (e) => {
+    e.preventDefault();
+
+    const input = document.querySelector('#username-input');
+    const username = input.value;
 };
 
 const addButtonListeners = () => {
@@ -59,6 +66,7 @@ sock.on('message', writeMessage);
 sock.on('server message', log);
 sock.on('buttonsDisabled', buttonsDisabled);
 
-document.querySelector('#chat-form').addEventListener('submit', onFormSubmitted);
+document.querySelector('#chat-form').addEventListener('submit', onChatSubmitted);
+document.querySelector('#username-form').addEventListener('submit', onUsernameSubmitted);
 
 addButtonListeners();
