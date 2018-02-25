@@ -19,18 +19,26 @@ const io = socketio(server);
 let waitingPlayer = null;
 
 io.on('connection', (socket) => {
-    if (waitingPlayer) {
-        waitingPlayer.emit('server message', 'Found an opponent!');
-        new RpsGame(waitingPlayer, socket);
+    console.log('Someone connected');
 
-        waitingPlayer = null;
-    } else {
-        waitingPlayer = socket;
-        waitingPlayer.emit('server message', 'Waiting for an opponent...')
-    }
+    socket.on('set username', (username) => {
+        socket.username = username;
+        socket.emit('username set');
+        io.emit('server message', `${username} has joined the room`);
 
-    socket.on('message', (text) => {
-        io.emit('message', text);
+        socket.on('message', (text) => {
+            io.emit('message', socket.username, text);
+        });
+
+        if (waitingPlayer) {
+            waitingPlayer.emit('server message', 'Found an opponent!');
+            new RpsGame(waitingPlayer, socket);
+
+            waitingPlayer = null;
+        } else {
+            waitingPlayer = socket;
+            waitingPlayer.emit('server message', 'Waiting for an opponent...')
+        }
     });
 });
 

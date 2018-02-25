@@ -10,9 +10,16 @@ const writeEvent = (element) => {
     }
 };
 
-const writeMessage = (text) => {
+const writeMessage = (username, message) => {
+    const strong = document.createElement('strong');
+    strong.innerHTML = `${username}: `;
+
+    const messageNode = document.createTextNode(message);
+
     const el = document.createElement('li');
-    el.innerHTML = text;
+    el.appendChild(strong);
+    el.appendChild(messageNode);
+
     writeEvent(el)
 };
 
@@ -39,8 +46,9 @@ const onChatSubmitted = (e) => {
 const onUsernameSubmitted = (e) => {
     e.preventDefault();
 
-    const input = document.querySelector('#username-input');
-    const username = input.value;
+    const username = document.querySelector('#username-input').value;
+
+    sock.emit('set username', username);
 };
 
 const addButtonListeners = () => {
@@ -59,12 +67,17 @@ const buttonsDisabled = (disabled) => {
     })
 };
 
+const usernameSet = () => {
+    document.querySelector('#choose-nickname').remove();
+};
+
 log('Welcome to RPS');
 
 const sock = io();
 sock.on('message', writeMessage);
 sock.on('server message', log);
 sock.on('buttonsDisabled', buttonsDisabled);
+sock.on('username set', usernameSet);
 
 document.querySelector('#chat-form').addEventListener('submit', onChatSubmitted);
 document.querySelector('#username-form').addEventListener('submit', onUsernameSubmitted);
