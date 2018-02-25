@@ -23,7 +23,7 @@ const writeMessage = (username, message) => {
     writeEvent(el)
 };
 
-const log = (text) => {
+const onServerMessage = (text) => {
     const el = document.createElement('li');
     el.innerHTML = text;
 
@@ -67,18 +67,46 @@ const buttonsDisabled = (disabled) => {
     })
 };
 
-const onUsernameAccepted = () => {
-    document.querySelector('#choose-nickname').remove();
-    document.querySelector('#chat').focus();
+const pushUsername = (username) => {
+    const parent = document.querySelector('#player-list-ul');
+    const element = document.createElement('li');
+    element.innerHTML = username;
+
+    parent.appendChild(element);
 };
 
-log('Welcome to RPS');
+const onUsernameAccepted = (usernames) => {
+    document.querySelector('#choose-nickname').remove();
+    document.querySelector('#chat').focus();
+    usernames.forEach(pushUsername);
+};
+
+const onUserJoined = (username) => {
+    onServerMessage(`${username} has joined the room.`);
+    pushUsername(username);
+};
+
+const onUserLeft = (username) => {
+    onServerMessage(`${username} has left the room.`);
+    const usernames = document.querySelectorAll('#player-list-ul li');
+    for (let i = 0; i < usernames.length; i++) {
+        let li = usernames[i];
+        if (li.innerHTML === username) {
+            li.parentNode.removeChild(li);
+            break;
+        }
+    }
+};
+
+onServerMessage('Welcome to RPS');
 
 const sock = io();
 sock.on('message', writeMessage);
-sock.on('server message', log);
+sock.on('server message', onServerMessage);
 sock.on('buttonsDisabled', buttonsDisabled);
 sock.on('username accepted', onUsernameAccepted);
+sock.on('user joined', onUserJoined);
+sock.on('user left', onUserLeft);
 
 document.querySelector('#chat-form').addEventListener('submit', onChatSubmitted);
 document.querySelector('#username-form').addEventListener('submit', onUsernameSubmitted);

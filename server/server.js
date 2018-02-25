@@ -17,14 +17,17 @@ const server = http.createServer(app);
 const io = socketio(server);
 
 let waitingPlayer = null;
+let users = [];
 
 io.on('connection', (socket) => {
     console.log('Someone connected');
 
     socket.on('set username', (username) => {
+        socket.join('in-game');
         socket.username = username;
-        socket.emit('username accepted');
-        io.emit('server message', `${username} has joined the room`);
+        users.push(socket);
+        socket.emit('username accepted', users.map(s => s.username));
+        socket.broadcast.to('in-game').emit('user joined', username);
 
         socket.on('message', (text) => {
             io.emit('message', socket.username, text);
@@ -37,12 +40,16 @@ io.on('connection', (socket) => {
             waitingPlayer = null;
         } else {
             waitingPlayer = socket;
-            waitingPlayer.emit('server message', 'Waiting for an opponent...')
+            waitingPlayer.emit('server message', 'Waiting for an opponent...');
         }
     });
 
     socket.on('disconnect', () => {
-        io.emit('server message', `${socket.username} has left the room`);
+        console.log('Someone disconnected');
+        if (users.includes(socket)) {
+            io.to('in-game').emit('user left', socket.username);
+            users.splice(users.indexOf(socket), 1);
+        }
     });
 });
 

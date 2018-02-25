@@ -6,7 +6,7 @@
 </head>
 <body>
     <div class="rps-wrapper">
-        <div class="chat-wrapper" id="choose-nickname">
+        <div id="choose-nickname" class="chat-wrapper">
             <form id="username-form">
                 <input id="username-input" placeholder="Input a username…">
                 <button>Submit</button>
@@ -27,6 +27,10 @@
                 <button id="scissors" class="play" disabled>Scissors</button>
             </div>
         </div>
+    </div>
+    <div id="player-list-container">
+        <h1>List of Users</h1>
+        <ul id="player-list-ul"></ul>
     </div>
     <script src="/socket.io/socket.io.js"></script>
     <script src="src/client.js"></script>
