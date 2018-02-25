@@ -40,6 +40,10 @@ io.on('connection', (socket) => {
             waitingPlayer.emit('server message', 'Waiting for an opponent...')
         }
     });
+
+    socket.on('disconnect', () => {
+        io.emit('server message', `${socket.username} has left the room`);
+    });
 });
 
 server.on('error', (err) => {
