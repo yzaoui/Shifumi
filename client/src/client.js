@@ -67,8 +67,9 @@ const buttonsDisabled = (disabled) => {
     })
 };
 
-const usernameSet = () => {
+const onUsernameAccepted = () => {
     document.querySelector('#choose-nickname').remove();
+    document.querySelector('#chat').focus();
 };
 
 log('Welcome to RPS');
@@ -77,7 +78,7 @@ const sock = io();
 sock.on('message', writeMessage);
 sock.on('server message', log);
 sock.on('buttonsDisabled', buttonsDisabled);
-sock.on('username set', usernameSet);
+sock.on('username accepted', onUsernameAccepted);
 
 document.querySelector('#chat-form').addEventListener('submit', onChatSubmitted);
 document.querySelector('#username-form').addEventListener('submit', onUsernameSubmitted);

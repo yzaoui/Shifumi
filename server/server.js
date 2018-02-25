@@ -23,7 +23,7 @@ io.on('connection', (socket) => {
 
     socket.on('set username', (username) => {
         socket.username = username;
-        socket.emit('username set');
+        socket.emit('username accepted');
         io.emit('server message', `${username} has joined the room`);
 
         socket.on('message', (text) => {

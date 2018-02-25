@@ -48,7 +48,7 @@ button.play:disabled {
 .rps-wrapper {
     position: relative;
     background-color: rgb(255, 255, 255);
-    width: 400px;
+    width: 500px;
     height: 700px;
     margin: 20px auto;
     display: flex;
