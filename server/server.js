@@ -30,7 +30,9 @@ io.on('connection', (socket) => {
         socket.broadcast.to('in-game').emit('user joined', username);
 
         socket.on('message', (text) => {
-            io.emit('message', socket.username, text);
+            if (text) {
+                io.emit('message', socket.username, text);
+            }
         });
 
         if (waitingPlayer) {

@@ -20,7 +20,7 @@ const writeMessage = (username, message) => {
     el.appendChild(strong);
     el.appendChild(messageNode);
 
-    writeEvent(el)
+    writeEvent(el);
 };
 
 const onServerMessage = (text) => {
@@ -38,9 +38,11 @@ const onChatSubmitted = (e) => {
 
     const input = document.querySelector('#chat');
     const text = input.value;
-    input.value = '';
+    if (text) {
+        input.value = '';
 
-    sock.emit('message', text);
+        sock.emit('message', text);
+    }
 };
 
 const onUsernameSubmitted = (e) => {
