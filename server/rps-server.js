@@ -3,9 +3,9 @@ class RpsGame {
         this._players = [p1, p2];
         this._plays = [null, null];
         this._sendToPlayers('Rock Paper Scissors has started!');
-        [0, 1].forEach(i => this._setPlayButtonsDisabled(i, false));
 
         this._players.forEach((player, i) => {
+            player.emit('game start');
             player.on('play', (play) => {
                 this._onPlay(i, play);
             })
@@ -24,7 +24,7 @@ class RpsGame {
         if (this._plays[playerIndex] === null) {
             this._plays[playerIndex] = play;
             this._sendToPlayer(playerIndex, `You selected ${play}`);
-            this._setPlayButtonsDisabled(playerIndex, true);
+            this._players[playerIndex].emit('play accepted');
             this._sendToPlayer((playerIndex + 1) % 2, `Your opponent made a play.`);
 
             this._checkGameOver();
@@ -39,7 +39,9 @@ class RpsGame {
             this._getGameResult();
             this._plays = [null, null];
             this._sendToPlayers('Next round...');
-            [0, 1].forEach((i) => this._setPlayButtonsDisabled(i, false))
+            this._players.forEach(player => {
+                player.emit('game start')
+            });
         }
     }
 
@@ -63,10 +65,6 @@ class RpsGame {
                 RpsGame._sendWinMessage(this._players[1], this._players[0]);
                 break;
         }
-    }
-
-    _setPlayButtonsDisabled(playerIndex, disabled) {
-        this._players[playerIndex].emit('buttonsDisabled', disabled);
     }
 
     static _sendWinMessage(winner, loser) {

@@ -10,6 +10,28 @@ const writeEvent = (element) => {
     }
 };
 
+const playButtonsEnabled = (enabled) => {
+    ['rock', 'paper', 'scissors'].forEach((i) => {
+        const button = document.getElementById(i);
+        button.disabled = !enabled;
+    });
+};
+
+const addButtonListeners = () => {
+    ['rock', 'paper', 'scissors'].forEach((i) => {
+        const button = document.getElementById(i);
+        button.addEventListener('click', () => {
+            sock.emit('play', i);
+        });
+    });
+};
+
+addButtonListeners();
+
+/********************************************************************************
+ *                        Server listeners start here                           *
+ ********************************************************************************/
+
 const writeMessage = (username, message) => {
     const strong = document.createElement('strong');
     strong.innerHTML = `${username}: `;
@@ -53,20 +75,8 @@ const onUsernameSubmitted = (e) => {
     sock.emit('set username', username);
 };
 
-const addButtonListeners = () => {
-    ['rock', 'paper', 'scissors'].forEach((i) => {
-        const button = document.getElementById(i);
-        button.addEventListener('click', () => {
-            sock.emit('play', i);
-        })
-    })
-};
-
-const buttonsDisabled = (disabled) => {
-    ['rock', 'paper', 'scissors'].forEach((i) => {
-        const button = document.getElementById(i);
-        button.disabled = disabled;
-    })
+const onGameStart = () => {
+    playButtonsEnabled(true);
 };
 
 const pushUsername = (username) => {
@@ -81,6 +91,10 @@ const onUsernameAccepted = (usernames) => {
     document.querySelector('#choose-nickname').remove();
     document.querySelector('#chat').focus();
     usernames.forEach(pushUsername);
+};
+
+const onPlayAccepted = () => {
+    playButtonsEnabled(false);
 };
 
 const onUserJoined = (username) => {
@@ -105,12 +119,12 @@ onServerMessage('Welcome to RPS');
 const sock = io();
 sock.on('message', writeMessage);
 sock.on('server message', onServerMessage);
-sock.on('buttonsDisabled', buttonsDisabled);
+sock.on('game start', onGameStart);
 sock.on('username accepted', onUsernameAccepted);
+sock.on('play accepted', onPlayAccepted);
 sock.on('user joined', onUserJoined);
 sock.on('user left', onUserLeft);
+sock.on('disconnect', (reason) => { onServerMessage(reason) });
 
 document.querySelector('#chat-form').addEventListener('submit', onChatSubmitted);
 document.querySelector('#username-form').addEventListener('submit', onUsernameSubmitted);
-
-addButtonListeners();
