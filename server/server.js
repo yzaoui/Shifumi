@@ -27,6 +27,7 @@ io.on('connection', (socket) => {
         socket.join('in-game');
         socket.username = username;
         players.push(socket);
+        // Send list of current players to player since they've been accepted
         socket.emit('username accepted', players.map(s => s.username));
         socket.broadcast.to('in-game').emit('user joined', username);
 
@@ -37,13 +38,15 @@ io.on('connection', (socket) => {
         });
 
         if (waitingPlayer) {
+            // If someone is waiting, match up with them
             waitingPlayer.emit('server message', 'Found an opponent!');
             new RpsGame(waitingPlayer, socket);
 
+            // No longer anyone waiting
             waitingPlayer = null;
         } else {
             waitingPlayer = socket;
-            waitingPlayer.emit('server message', 'Waiting for an opponent...');
+            waitingPlayer.emit('server message', 'Waiting for an opponent…');
         }
     });
 
@@ -52,6 +55,10 @@ io.on('connection', (socket) => {
         if (players.includes(socket)) {
             io.to('in-game').emit('user left', socket.username);
             players.splice(players.indexOf(socket), 1);
+        }
+        // If this player was waiting, remove them from waiting list
+        if (waitingPlayer === socket) {
+            waitingPlayer = null;
         }
     });
 });
