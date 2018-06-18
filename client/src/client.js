@@ -112,6 +112,9 @@ const onUsernameAccepted = (usernames) => {
     document.querySelectorAll('.dim-overlay').forEach(e => e.classList.remove('dim-overlay'));
     // Focus on chat input box
     document.querySelector('#chat').focus();
+    // Reenable message sending
+    document.querySelector('#chat').disabled = false;
+    document.querySelector('#send-message').disabled = false;
     // Show list of users
     usernames.forEach(pushUsername);
 };
