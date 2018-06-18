@@ -9,6 +9,7 @@ const app = express();
 const clientPath = `${__dirname}/../client`;
 console.log(`Serving static from ${clientPath}`);
 
+const port = 5927;
 
 app.use(express.static(clientPath));
 
@@ -17,21 +18,21 @@ const server = http.createServer(app);
 const io = socketio(server);
 
 let waitingPlayer = null;
-let users = [];
+let players = [];
 
 io.on('connection', (socket) => {
-    console.log('Someone connected');
+    console.log(`Someone connected: ${socket.id}`);
 
     socket.on('set username', (username) => {
         socket.join('in-game');
         socket.username = username;
-        users.push(socket);
-        socket.emit('username accepted', users.map(s => s.username));
+        players.push(socket);
+        socket.emit('username accepted', players.map(s => s.username));
         socket.broadcast.to('in-game').emit('user joined', username);
 
-        socket.on('message', (text) => {
+        socket.on('user message', (text) => {
             if (text) {
-                io.emit('message', socket.username, text);
+                io.emit('user message', socket.username, text);
             }
         });
 
@@ -47,10 +48,10 @@ io.on('connection', (socket) => {
     });
 
     socket.on('disconnect', () => {
-        console.log('Someone disconnected');
-        if (users.includes(socket)) {
+        console.log(`Someone disconnected: ${socket.id}`);
+        if (players.includes(socket)) {
             io.to('in-game').emit('user left', socket.username);
-            users.splice(users.indexOf(socket), 1);
+            players.splice(players.indexOf(socket), 1);
         }
     });
 });
@@ -59,6 +60,6 @@ server.on('error', (err) => {
     console.error('Server error: ', err);
 });
 
-server.listen(5927, () => {
-    console.log('RPS started on 5927');
+server.listen(port, () => {
+    console.log(`RPS started on ${port}`);
 });

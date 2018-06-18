@@ -6,7 +6,8 @@ body {
 }
 
 input {
-    outline: none;
+    /* TODO: Use :focus-visible when it comes out */
+    /* outline: none; */
     font-size: 1.0rem;
     padding: 0 5px;
 }
@@ -23,7 +24,6 @@ button {
     cursor: pointer;
     box-shadow: rgba(0, 0, 0, 0.12) 0 1px 6px, rgba(0, 0, 0, 0.12) 0 1px 4px;
     transition: all 150ms ease-in;
-    outline: none;
 }
 
 button:hover {
@@ -95,15 +95,18 @@ button.play:disabled {
     justify-content: space-evenly;
 }
 
-#choose-nickname {
+.dim-overlay {
     background-color: rgba(0, 0, 0, 0.7);
+}
+
+#choose-username {
     position: absolute;
     width:  100%;
     height: 100%;
     box-sizing: border-box;
 }
 
-#choose-nickname form {
+#username-form {
     top: 50%;
     width: calc(100% - 20px);
     position: absolute;

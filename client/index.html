@@ -6,7 +6,7 @@
 </head>
 <body>
     <div class="rps-wrapper">
-        <div id="choose-nickname" class="chat-wrapper">
+        <div id="choose-username" class="chat-wrapper dim-overlay">
             <form id="username-form">
                 <input id="username-input" placeholder="Input a username…">
                 <button>Submit</button>
@@ -16,8 +16,8 @@
         <div class="controls">
             <div class="chat-wrapper">
                 <form id="chat-form">
-                    <input id="chat" autocomplete="off" title="chat"/>
-                    <button id="say">Say</button>
+                    <input id="chat" autocomplete="off" title="chat" placeholder="Send a message…"/>
+                    <button title="Send message">Send</button>
                 </form>
             </div>
 
@@ -28,7 +28,7 @@
             </div>
         </div>
     </div>
-    <div id="player-list-container">
+    <div id="player-list-container" class="dim-overlay">
         <h1>List of Users</h1>
         <ul id="player-list-ul"></ul>
     </div>
