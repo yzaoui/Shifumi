@@ -42,7 +42,7 @@ const onChatSubmitted = (e) => {
     const input = document.querySelector('#chat');
     // Move focus back to input to immediately be ready to type again
     input.focus();
-    const text = input.value;
+    const text = input.value.trim();
     if (text) {
         input.value = '';
 
@@ -53,9 +53,14 @@ const onChatSubmitted = (e) => {
 const onUsernameSubmitted = (e) => {
     e.preventDefault();
 
-    const username = document.querySelector('#username-input').value;
+    const username = document.querySelector('#username-input').value.trim();
 
-    socket.emit('set username', username);
+    if (username) {
+        socket.emit('set username', username);
+    } else {
+        // Let user try another username
+        document.querySelector('#username-input').focus();
+    }
 };
 
 document.querySelector('#chat-form').addEventListener('submit', onChatSubmitted);
