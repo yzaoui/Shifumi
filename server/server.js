@@ -29,6 +29,7 @@ io.on('connection', (socket) => {
         players.push(socket);
         // Send list of current players to player since they've been accepted
         socket.emit('username accepted', players.map(s => s.username));
+        socket.emit("server message", { text: "Welcome to RPS!" });
         socket.broadcast.to('in-game').emit('user joined', username);
 
         socket.on('user message', (text) => {
@@ -39,21 +40,21 @@ io.on('connection', (socket) => {
 
         if (waitingPlayer) {
             // If someone is waiting, match up with them
-            waitingPlayer.emit('server message', 'Found an opponent!');
+            waitingPlayer.emit("server message", { text: "Found an opponent!" });
             new RpsGame(waitingPlayer, socket);
 
             // No longer anyone waiting
             waitingPlayer = null;
         } else {
             waitingPlayer = socket;
-            waitingPlayer.emit('server message', 'Waiting for an opponent…');
+            waitingPlayer.emit("server message", { text: "Waiting for an opponent…" });
         }
     });
 
-    socket.on('disconnect', () => {
+    socket.on("disconnect", () => {
         console.log(`Someone disconnected: ${socket.id}`);
         if (players.includes(socket)) {
-            io.to('in-game').emit('user left', socket.username);
+            io.to("in-game").emit("user left", socket.username);
             players.splice(players.indexOf(socket), 1);
         }
         // If this player was waiting, remove them from waiting list
@@ -63,8 +64,8 @@ io.on('connection', (socket) => {
     });
 });
 
-server.on('error', (err) => {
-    console.error('Server error: ', err);
+server.on("error", (err) => {
+    console.error("Server error: ", err);
 });
 
 server.listen(port, () => {

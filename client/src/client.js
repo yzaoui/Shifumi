@@ -1,5 +1,5 @@
 const writeEvent = (element) => {
-    const parent = document.querySelector('#events');
+    const parent = document.querySelector("#events");
 
     let needToScroll = (parent.scrollTop + parent.clientHeight) === parent.scrollHeight;
 
@@ -19,17 +19,17 @@ document.querySelector("#username-input").focus();
  ********************************************************************************/
 
 const playButtonsEnabled = (enabled) => {
-    ['rock', 'paper', 'scissors'].forEach((i) => {
+    ["rock", "paper", "scissors"].forEach((i) => {
         const button = document.getElementById(i);
         button.disabled = !enabled;
     });
 };
 
 const addButtonListeners = () => {
-    ['rock', 'paper', 'scissors'].forEach((i) => {
+    ["rock", "paper", "scissors"].forEach((i) => {
         const button = document.getElementById(i);
-        button.addEventListener('click', () => {
-            socket.emit('play', i);
+        button.addEventListener("click", () => {
+            socket.emit("play", i);
         });
     });
 };
@@ -39,58 +39,61 @@ addButtonListeners();
 const onChatSubmitted = (e) => {
     e.preventDefault();
 
-    const input = document.querySelector('#chat');
+    const input = document.querySelector("#chat");
     // Move focus back to input to immediately be ready to type again
     input.focus();
     const text = input.value.trim();
     if (text) {
-        input.value = '';
+        input.value = "";
 
-        socket.emit('user message', text);
+        socket.emit("user message", text);
     }
 };
 
 const onUsernameSubmitted = (e) => {
     e.preventDefault();
 
-    const username = document.querySelector('#username-input').value.trim();
+    const username = document.querySelector("#username-input").value.trim();
 
     if (username) {
-        socket.emit('set username', username);
+        socket.emit("set username", username);
     } else {
         // Let user try another username
-        document.querySelector('#username-input').focus();
+        document.querySelector("#username-input").focus();
     }
 };
 
-document.querySelector('#chat-form').addEventListener('submit', onChatSubmitted);
-document.querySelector('#username-form').addEventListener('submit', onUsernameSubmitted);
+document.querySelector("#chat-form").addEventListener("submit", onChatSubmitted);
+document.querySelector("#username-form").addEventListener("submit", onUsernameSubmitted);
 
 /********************************************************************************
  *                        Server listeners start here                           *
  ********************************************************************************/
 
 const onUserMessage = (username, message) => {
-    const strong = document.createElement('strong');
+    const strong = document.createElement("strong");
     strong.innerHTML = `${username}: `;
 
     const messageNode = document.createTextNode(message);
 
-    const el = document.createElement('li');
+    const el = document.createElement("li");
     el.appendChild(strong);
     el.appendChild(messageNode);
 
     writeEvent(el);
 };
 
-const onServerMessage = (text) => {
-    const el = document.createElement('li');
-    el.innerHTML = text;
+// msg = { text: String [, type: String ] }
+const onServerMessage = (msg) => {
+    const el = document.createElement("li");
+    el.innerHTML = msg.text;
+    el.classList.add("server-message");
 
-    const strong = document.createElement('strong');
-    strong.appendChild(el);
+    if (msg.type) {
+        el.classList.add(msg.type);
+    }
 
-    writeEvent(strong);
+    writeEvent(el);
 };
 
 const onGameStart = () => {
@@ -98,8 +101,8 @@ const onGameStart = () => {
 };
 
 const pushUsername = (username) => {
-    const parent = document.querySelector('#player-list-ul');
-    const element = document.createElement('li');
+    const parent = document.querySelector("#player-list-ul");
+    const element = document.createElement("li");
     element.innerHTML = username;
 
     parent.appendChild(element);
@@ -107,14 +110,14 @@ const pushUsername = (username) => {
 
 const onUsernameAccepted = (usernames) => {
     // Remove the username form
-    document.querySelector('#choose-username').remove();
+    document.querySelector("#choose-username").remove();
     // Remove .dim-overlay from darkened elements
-    document.querySelectorAll('.dim-overlay').forEach(e => e.classList.remove('dim-overlay'));
+    document.querySelectorAll(".dim-overlay").forEach(e => e.classList.remove("dim-overlay"));
     // Focus on chat input box
-    document.querySelector('#chat').focus();
+    document.querySelector("#chat").focus();
     // Reenable message sending
-    document.querySelector('#chat').disabled = false;
-    document.querySelector('#send-message').disabled = false;
+    document.querySelector("#chat").disabled = false;
+    document.querySelector("#send-message").disabled = false;
     // Show list of users
     usernames.forEach(pushUsername);
 };
@@ -124,13 +127,13 @@ const onPlayAccepted = () => {
 };
 
 const onUserJoined = (username) => {
-    onServerMessage(`${username} has joined the room.`);
+    onServerMessage({ text: `${username} has joined the room.`, type: "positive" });
     pushUsername(username);
 };
 
 const onUserLeft = (username) => {
-    onServerMessage(`${username} has left the room.`);
-    const usernames = document.querySelectorAll('#player-list-ul li');
+    onServerMessage({ text: `${username} has left the room.`, type: "negative" });
+    const usernames = document.querySelectorAll("#player-list-ul > li");
     for (let i = 0; i < usernames.length; i++) {
         let li = usernames[i];
         if (li.innerHTML === username) {
@@ -141,16 +144,14 @@ const onUserLeft = (username) => {
 };
 
 const onDisconnect = (reason) => {
-    onServerMessage(reason);
+    onServerMessage({ text: reason, type: "negative" });
 };
 
-onServerMessage('Welcome to RPS');
-
-socket.on('user message', onUserMessage);
-socket.on('server message', onServerMessage);
-socket.on('game start', onGameStart);
-socket.on('username accepted', onUsernameAccepted);
-socket.on('play accepted', onPlayAccepted);
-socket.on('user joined', onUserJoined);
-socket.on('user left', onUserLeft);
-socket.on('disconnect', onDisconnect);
+socket.on("user message", onUserMessage);
+socket.on("server message", onServerMessage);
+socket.on("game start", onGameStart);
+socket.on("username accepted", onUsernameAccepted);
+socket.on("play accepted", onPlayAccepted);
+socket.on("user joined", onUserJoined);
+socket.on("user left", onUserLeft);
+socket.on("disconnect", onDisconnect);

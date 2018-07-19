@@ -2,30 +2,30 @@ class RpsGame {
     constructor(p1, p2) {
         this._players = [p1, p2];
         this._plays = [null, null];
-        this._sendToPlayers('Rock Paper Scissors has started!');
+        this._sendToPlayers("Rock Paper Scissors has started!");
 
         this._players.forEach((player, i) => {
-            player.emit('game start');
-            player.on('play', (play) => {
+            player.emit("game start");
+            player.on("play", (play) => {
                 this._onPlay(i, play);
             })
         })
     }
 
-    _sendToPlayer(playerIndex, msg) {
-        this._players[playerIndex].emit('server message', msg)
+    _sendToPlayer(playerIndex, text, type) {
+        this._players[playerIndex].emit("server message", { text, type });
     }
 
-    _sendToPlayers(msg) {
-        this._players.forEach(player => player.emit('server message', msg))
+    _sendToPlayers(text, type) {
+        this._players.forEach(player => player.emit("server message", { text, type }));
     }
 
     _onPlay(playerIndex, play) {
         if (this._plays[playerIndex] === null) {
             this._plays[playerIndex] = play;
             this._sendToPlayer(playerIndex, `You selected ${play}`);
-            this._players[playerIndex].emit('play accepted');
-            this._sendToPlayer((playerIndex + 1) % 2, `Your opponent made a play.`);
+            this._players[playerIndex].emit("play accepted");
+            this._sendToPlayer((playerIndex + 1) % 2, "Your opponent made a play.", "warning");
 
             this._checkGameOver();
         }
@@ -35,12 +35,12 @@ class RpsGame {
         const turns = this._plays;
 
         if (turns[0] && turns[1]) {
-            this._sendToPlayers('Game over! ' + turns.join(' vs '));
+            this._sendToPlayers(`Game over! ${turns.join(' vs ')}`);
             this._getGameResult();
             this._plays = [null, null];
-            this._sendToPlayers('Next round...');
+            this._sendToPlayers("Next round…");
             this._players.forEach(player => {
-                player.emit('game start')
+                player.emit("game start")
             });
         }
     }
@@ -54,31 +54,31 @@ class RpsGame {
         switch (distance) {
             case 0:
                 //draw
-                this._sendToPlayers('Draw!');
+                this._sendToPlayers("Draw!");
                 break;
             case 1:
                 //p0 won
-                RpsGame._sendWinMessage(this._players[0], this._players[1]);
+                this._sendWinLossMessages(0, 1);
                 break;
             case 2:
                 //p1 won
-                RpsGame._sendWinMessage(this._players[1], this._players[0]);
+                this._sendWinLossMessages(1, 0);
                 break;
         }
     }
 
-    static _sendWinMessage(winner, loser) {
-        winner.emit('server message', 'You won!');
-        loser.emit('server message', 'You lost!');
+    _sendWinLossMessages(winnerIndex, loserIndex) {
+        this._sendToPlayer(winnerIndex, "You won!", "positive");
+        this._sendToPlayer(loserIndex, "You lost!", "negative");
     }
 
     static _decodePlay(play) {
         switch (play) {
-            case 'rock':
+            case "rock":
                 return 0;
-            case 'paper':
+            case "paper":
                 return 1;
-            case 'scissors':
+            case "scissors":
                 return 2;
             default:
                 throw new Error(`Could not decode play ${play}`);

@@ -71,10 +71,36 @@ button.play:disabled {
     padding: 0;
     border-bottom: 1px solid lightgrey;
     overflow-y: scroll;
+    background: #f1f7ff;
 }
 
-#events li {
+#events > li {
     padding: 10px 10px 10px 10px;
+}
+
+#events > li:nth-child(even) {
+    background-color: #e2e8f0;
+}
+
+.server-message {
+    color: #3975CE;
+    font-weight: bold;
+}
+
+.server-message.positive {
+    color: #56CE27;
+}
+
+.server-message.negative {
+    color: #CE4F0A;
+}
+
+.server-message.warning {
+    color: #CCCC00;
+}
+
+.user-message {
+
 }
 
 .chat-wrapper {
@@ -129,4 +155,27 @@ button.play:disabled {
     border-bottom: 1px solid lightgrey;
     margin: 20px auto 20px 0px;
     padding: 10px;
+}
+
+#player-list-container > h1 {
+    text-align: center;
+}
+
+#player-list-ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    border: 1px solid;
+}
+
+#player-list-ul > li {
+    padding: 6px;
+}
+
+#player-list-ul > li:nth-child(odd) {
+    background-color: gainsboro;
+}
+
+#player-list-ul > li:nth-child(even) {
+    background-color: #f9f9f9;
 }
