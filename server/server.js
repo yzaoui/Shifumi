@@ -9,7 +9,7 @@ const app = express();
 const clientPath = `${__dirname}/../client`;
 console.log(`Serving static from ${clientPath}`);
 
-const port = 5927;
+const port = process.env.PORT || 5927;
 
 app.use(express.static(clientPath));
 
